@@ -1,0 +1,1 @@
+Download the canonical smiles file from the [coconut database](https://coconut.naturalproducts.net/download) into the scripts directory to use the program.
