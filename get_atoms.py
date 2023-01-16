@@ -7,10 +7,10 @@ from open_babel import getBondPairs
 
 def identify_last_character (table):
     lines = table.split("\n")
-    atoms = []
+    character_list = []
     for line in lines:
-        atoms.append(line[-1])
-    return atoms
+        character_list.append(line[-1])
+    return character_list
 
 def find_atoms (character_list):
     numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -41,6 +41,17 @@ def get_binding_partners (bonds, bond_pairs):
         partners.append(bond_pairs[bond][1])
     return partners
 
+def find_acetal (bondpairs, heteroatom_index):
+    possible_acetals = []
+    for pairs in bondpairs:
+        for index in  heteroatom_index:
+            if str(index) in pairs:
+                possible_acetals.append(pairs[0])
+                possible_acetals.append(pairs[1])
+    return possible_acetals
+
+
+
 
 
 if __name__=='__main__':
@@ -59,4 +70,12 @@ if __name__=='__main__':
 
     higher_bonds = check_bond_type(BondOrder)
     partners_higher_bonds = get_binding_partners(higher_bonds, BondPairs)
-    print(partners_higher_bonds)
+    last_character = identify_last_character (MDL)
+    atoms_list = find_atoms(last_character)
+    index_heteroatoms = get_index_hetero_atoms (atoms_list)
+
+
+    possible_acetals = find_acetal(BondPairs, index_heteroatoms)
+
+    print(possible_acetals)
+    print(index_heteroatoms)
