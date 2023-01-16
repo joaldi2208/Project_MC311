@@ -1,4 +1,6 @@
 from open_babel import smiles2ConnectionTable
+from open_babel import getBondOrder
+from open_babel import getBondPairs
 
 
 
@@ -20,15 +22,41 @@ def find_atoms (character_list):
 
 def get_index_hetero_atoms (atoms_list):
     hetero_atoms = []
-    for atom in atoms_list:
-        if atom is not "C":
-            hetero_atoms.append(index(atom))
+    for index, atom in enumerate(atoms_list):
+        if atom != "C":
+            hetero_atoms.append(index+1)
     return hetero_atoms
+
+def check_bond_type (bond_list):
+    bonds = []
+    for index, bond in enumerate(bond_list):
+        if bond != "1":
+            bonds.append(index)
+    return bonds
+
+def get_binding_partners (bonds, bond_pairs):
+    partners = []
+    for bond in bonds:
+        partners.append(bond_pairs[bond][0])
+        partners.append(bond_pairs[bond][1])
+    return partners
+
 
 
 if __name__=='__main__':
 
-    _, MDL = smiles2ConnectionTable("O[C@@H](Cc1ccccc1)C(O)=O")
+    connection_table, MDL = smiles2ConnectionTable("O[C@@H](Cc1ccccc1)C(O)=O")
 
-    print(MDL)
-    find_atoms(identify_last_character(MDL))
+    #print(MDL)
+    #find_atoms(identify_last_character(MDL))
+
+    BondPairs = getBondPairs(connection_table)
+    BondOrder = getBondOrder(connection_table)
+
+    
+    print(BondOrder)
+    print(BondPairs)
+
+    higher_bonds = check_bond_type(BondOrder)
+    partners_higher_bonds = get_binding_partners(higher_bonds, BondPairs)
+    print(partners_higher_bonds)
