@@ -4,7 +4,7 @@ import numpy as np
 import os
 import sys
 
-
+import matplotlib.pyplot as plt
 
 def readDatabase():
     """read SMILES from SMilES coconut database"""
@@ -173,7 +173,17 @@ class HashedKey(object):
 
         return above_threshold_entries
                 
-    
+def bitStringDistribution(coconut_bitString):
+    """plots the distribution of the number of one's in the bit string"""
+    sum_of_ones = []
+    for bitString in coconut_bitString:
+        sum_of_one = sum(bitString)
+        sum_of_ones.append(sum_of_one)
+
+    plt.hist(sum_of_ones)
+    plt.show()
+
+
 
 if __name__ == "__main__":
     hashseed = os.getenv('PYTHONHASHSEED')
@@ -184,6 +194,7 @@ if __name__ == "__main__":
     coconut_smiles = readDatabase()
     coconut_bitStrings = databaseBitStrings(coconut_smiles[:500])
     
+    bitStringDistribution(coconut_bitStrings)
     #SMILES from Penicillin G
     h = HashedKey("CC1(C(N2C(S1)C(C2=O)NC(=O)CC3=CC=CC=C3)C(=O)O)C")
     
