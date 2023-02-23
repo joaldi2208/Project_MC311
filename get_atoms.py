@@ -2,7 +2,7 @@ from open_babel import smiles2ConnectionTable
 from open_babel import getBondOrder
 from open_babel import getBondPairs
 
-
+from collections import Counter
 
 
 def identify_last_character (table):
@@ -50,8 +50,24 @@ def find_acetal (bondpairs, heteroatom_index):
                 possible_acetals.append(pairs[1])
     return possible_acetals
 
+def count_atom_appearance(BondPairs: list)-> dict:
+    """counts the number of appearances of a certain atom in the bond pairs"""
+    count_atoms = Counter()
+    for atom1, atom2 in BondPairs:
+        count_atoms[atom1] += 1
+        count_atoms[atom2] += 1
 
+    return count_atoms
 
+def remove_endgroups(BondPairs: list, count_atoms: dict)-> list:
+    """removes the endgroups (single appearance in count_atoms) from the BondPair list"""
+    endgroups = list(filter(lambda atom: count_atoms[atom] == 1, count_atoms))
+    BondPairs2Connections = []
+    for pair in BondPairs:
+        if pair[0] not in endgroups and pair[1] not in endgroups:
+            BondPairs2Connections.append(pair)
+
+    return BondPairs2Connections
 
 
 if __name__=='__main__':
@@ -64,9 +80,13 @@ if __name__=='__main__':
     BondPairs = getBondPairs(connection_table)
     BondOrder = getBondOrder(connection_table)
 
+    count_atoms = count_atom_appearance(BondPairs)
+    BondPairs2Connections = remove_endgroups(BondPairs, count_atoms)
     
+
     print(BondOrder)
     print(BondPairs)
+    print(BondPairs2Connections)
 
     higher_bonds = check_bond_type(BondOrder)
     partners_higher_bonds = get_binding_partners(higher_bonds, BondPairs)
